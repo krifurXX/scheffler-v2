@@ -1,15 +1,28 @@
 import { AXIS, FERRITE_LINES, REGIONS, type RegionId } from '../data/schaeffler'
 
-export interface DiagramPoint {
+export interface DiagramMarker {
   x: number
   y: number
+  /** Rendered next to the marker; empty string = no label */
   label: string
+  shape: 'circle' | 'square' | 'diamond' | 'ring' | 'dot'
+  color: string
+  size?: 'normal' | 'small'
+}
+
+export interface DiagramLine {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  color: string
+  dash?: string
+  opacity?: number
 }
 
 interface Props {
-  pointA: DiagramPoint
-  pointB: DiagramPoint
-  mixPoint: DiagramPoint
+  markers: DiagramMarker[]
+  lines: DiagramLine[]
   activeRegionId: RegionId | null
 }
 
@@ -33,7 +46,7 @@ const REGION_FILL: Record<RegionId, string> = {
   F: '#f2ecca',
 }
 
-export default function SchaefflerDiagram({ pointA, pointB, mixPoint, activeRegionId }: Props) {
+export default function SchaefflerDiagram({ markers, lines, activeRegionId }: Props) {
   const gridX = []
   for (let x = 0; x <= AXIS.crMax; x += 2) gridX.push(x)
   const gridY = []
@@ -136,30 +149,57 @@ export default function SchaefflerDiagram({ pointA, pointB, mixPoint, activeRegi
         <tspan baselineShift="sub" fontSize={10}>eq</tspan> = %Ni + 30·%C + 0.5·%Mn
       </text>
 
-      {/* mixing line A–B */}
-      <line
-        x1={px(pointA.x)}
-        y1={py(pointA.y)}
-        x2={px(pointB.x)}
-        y2={py(pointB.y)}
-        stroke="#003b5b"
-        strokeWidth={1.5}
-        strokeDasharray="2 3"
-      />
+      {/* scene lines (mixing lines, pass paths) */}
+      {lines.map((l, i) => (
+        <line
+          key={`sl${i}`}
+          x1={px(l.x1)}
+          y1={py(l.y1)}
+          x2={px(l.x2)}
+          y2={py(l.y2)}
+          stroke={l.color}
+          strokeWidth={1.5}
+          strokeDasharray={l.dash}
+          strokeOpacity={l.opacity ?? 1}
+        />
+      ))}
 
-      {/* points A and B */}
-      <circle cx={px(pointA.x)} cy={py(pointA.y)} r={6} fill="#003b5b" />
-      <text x={px(pointA.x) + 9} y={py(pointA.y) - 8} fontSize={13} fontWeight={700} fill="#003b5b">
-        A
-      </text>
-      <rect x={px(pointB.x) - 5.5} y={py(pointB.y) - 5.5} width={11} height={11} fill="#1380a4" />
-      <text x={px(pointB.x) + 9} y={py(pointB.y) - 8} fontSize={13} fontWeight={700} fill="#1380a4">
-        B
-      </text>
-
-      {/* mix point */}
-      <circle cx={px(mixPoint.x)} cy={py(mixPoint.y)} r={8} fill="none" stroke="#d9480f" strokeWidth={3} />
-      <circle cx={px(mixPoint.x)} cy={py(mixPoint.y)} r={2.5} fill="#d9480f" />
+      {/* scene markers (materials, mix/weld points, passes) */}
+      {markers.map((m, i) => {
+        const cx = px(m.x)
+        const cy = py(m.y)
+        const small = m.size === 'small'
+        return (
+          <g key={`sm${i}`}>
+            {m.shape === 'circle' && <circle cx={cx} cy={cy} r={small ? 3 : 6} fill={m.color} />}
+            {m.shape === 'square' && (
+              <rect x={cx - (small ? 3 : 5.5)} y={cy - (small ? 3 : 5.5)} width={small ? 6 : 11} height={small ? 6 : 11} fill={m.color} />
+            )}
+            {m.shape === 'diamond' && (
+              <rect
+                x={cx - (small ? 3 : 5.5)}
+                y={cy - (small ? 3 : 5.5)}
+                width={small ? 6 : 11}
+                height={small ? 6 : 11}
+                fill={m.color}
+                transform={`rotate(45 ${cx} ${cy})`}
+              />
+            )}
+            {m.shape === 'ring' && (
+              <>
+                <circle cx={cx} cy={cy} r={8} fill="none" stroke={m.color} strokeWidth={3} />
+                <circle cx={cx} cy={cy} r={2.5} fill={m.color} />
+              </>
+            )}
+            {m.shape === 'dot' && <circle cx={cx} cy={cy} r={small ? 3 : 4} fill={m.color} />}
+            {m.label && (
+              <text x={cx + (small ? 6 : 9)} y={cy - (small ? 5 : 8)} fontSize={small ? 10 : 13} fontWeight={700} fill={m.color}>
+                {m.label}
+              </text>
+            )}
+          </g>
+        )
+      })}
     </svg>
   )
 }

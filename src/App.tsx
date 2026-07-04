@@ -26,18 +26,31 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
       <header className="bg-hv-dark text-white px-6 py-4">
-        <h1 className="text-xl font-bold">Schaeffler diagram — mixing two materials</h1>
+        <h1 className="text-xl font-bold">Schaeffler diagram — weld metal prediction</h1>
         <p className="text-sm text-hv-light mt-0.5">
-          Select two materials and see where the mixture ends up in the diagram
+          Select base materials (and optionally a filler metal) and see where the weld metal ends
+          up in the diagram
         </p>
       </header>
 
       <main className="max-w-7xl mx-auto p-4 lg:p-6 grid gap-4 lg:grid-cols-[2fr_1fr]">
         <section aria-label="Diagram">
           <SchaefflerDiagram
-            pointA={{ x: creq(materialA.composition), y: nieq(materialA.composition), label: 'A' }}
-            pointB={{ x: creq(materialB.composition), y: nieq(materialB.composition), label: 'B' }}
-            mixPoint={{ x: mixX, y: mixY, label: 'Mixture' }}
+            markers={[
+              { x: creq(materialA.composition), y: nieq(materialA.composition), label: 'A', shape: 'circle', color: '#003b5b' },
+              { x: creq(materialB.composition), y: nieq(materialB.composition), label: 'B', shape: 'square', color: '#1380a4' },
+              { x: mixX, y: mixY, label: '', shape: 'ring', color: '#d9480f' },
+            ]}
+            lines={[
+              {
+                x1: creq(materialA.composition),
+                y1: nieq(materialA.composition),
+                x2: creq(materialB.composition),
+                y2: nieq(materialB.composition),
+                color: '#003b5b',
+                dash: '2 3',
+              },
+            ]}
             activeRegionId={region?.id ?? null}
           />
         </section>

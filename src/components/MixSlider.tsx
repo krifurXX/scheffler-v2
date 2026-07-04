@@ -11,7 +11,7 @@ export default function MixSlider({ pctB, onChange, nameA, nameB }: Props) {
     <div className="border border-gray-300 border-l-4 border-l-hv-blue bg-white">
       <div className="px-4 py-2 bg-hv-light">
         <label className="font-bold text-hv-dark" htmlFor="mix-slider">
-          Mixing ratio
+          Base metal balance (A : B)
         </label>
       </div>
       <div className="px-4 py-3">
