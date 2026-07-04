@@ -105,6 +105,14 @@ export const MATERIALS: Material[] = [
     group: 'martensitic',
   },
   {
+    id: 'ER309L',
+    name: 'Filler ER309L',
+    designation: 'EN ISO 14343-A: G 23 12 L',
+    composition: { C: 0.02, Mn: 1.8, Si: 0.45, Cr: 23.5, Ni: 13.5, Mo: 0.1, Nb: 0 },
+    range: { C: '≤ 0.03', Mn: '1.0–2.5', Si: '0.30–0.65', Cr: '22.0–25.0', Ni: '12.0–14.0' },
+    group: 'austenitic',
+  },
+  {
     id: 'S355',
     name: 'Structural steel S355',
     designation: 'EN 10025-2 / S355J2',
