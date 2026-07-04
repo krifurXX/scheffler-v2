@@ -3,14 +3,17 @@ import MaterialSelect from './components/MaterialSelect'
 import MixSlider from './components/MixSlider'
 import ResultPanel from './components/ResultPanel'
 import SchaefflerDiagram from './components/SchaefflerDiagram'
-import { MATERIALS } from './data/materials'
+import { resolveMaterial, type MaterialSelection } from './data/materials'
 import { classifyPoint, creq, estimateFerrite, mixComposition, nieq } from './lib/calc'
 import { collectWarnings } from './lib/warnings'
 
 export default function App() {
-  const [materialA, setMaterialA] = useState(MATERIALS[0]) // 304
-  const [materialB, setMaterialB] = useState(MATERIALS[7]) // S355
+  const [selA, setSelA] = useState<MaterialSelection>({ kind: 'preset', id: '304' })
+  const [selB, setSelB] = useState<MaterialSelection>({ kind: 'preset', id: 'S355' })
   const [pctB, setPctB] = useState(50)
+
+  const materialA = resolveMaterial(selA)
+  const materialB = resolveMaterial(selB)
 
   const mixed = useMemo(
     () => mixComposition(materialA.composition, materialB.composition, pctB / 100),
@@ -21,7 +24,13 @@ export default function App() {
   const mixY = nieq(mixed)
   const region = classifyPoint(mixX, mixY)
   const ferritePct = estimateFerrite(mixX, mixY)
-  const warnings = collectWarnings(materialA, materialB, mixed)
+  const warnings = collectWarnings(
+    [
+      { label: 'Material A', material: materialA },
+      { label: 'Material B', material: materialB },
+    ],
+    [{ x: mixX, y: mixY }],
+  )
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
@@ -58,14 +67,14 @@ export default function App() {
         <section className="space-y-4" aria-label="Settings and result">
           <MaterialSelect
             label="Material A"
-            value={materialA}
-            onChange={setMaterialA}
+            value={selA}
+            onChange={(s) => s && setSelA(s)}
             accentClass="border-l-hv-dark"
           />
           <MaterialSelect
             label="Material B"
-            value={materialB}
-            onChange={setMaterialB}
+            value={selB}
+            onChange={(s) => s && setSelB(s)}
             accentClass="border-l-hv-blue"
           />
           <MixSlider pctB={pctB} onChange={setPctB} nameA={materialA.designation} nameB={materialB.designation} />

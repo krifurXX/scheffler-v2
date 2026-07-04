@@ -21,7 +21,30 @@ export interface Material {
   range?: Partial<Record<keyof Composition, string>>
   /** Schaeffler ignores nitrogen — flag N-alloyed grades for a warning */
   nitrogenAlloyed?: boolean
-  group: 'austenitic' | 'ferritic' | 'martensitic' | 'unalloyed'
+  group: 'austenitic' | 'ferritic' | 'martensitic' | 'unalloyed' | 'custom'
+}
+
+/** What the user picked in a material slot: a preset steel or a user-defined composition. */
+export type MaterialSelection =
+  | { kind: 'preset'; id: string }
+  | { kind: 'custom'; composition: Composition }
+
+export const EMPTY_COMPOSITION: Composition = { C: 0, Mn: 0, Si: 0, Cr: 0, Ni: 0, Mo: 0, Nb: 0 }
+
+/** Resolve a selection to a plain Material so everything downstream stays unchanged. */
+export function resolveMaterial(sel: MaterialSelection): Material {
+  if (sel.kind === 'preset') {
+    const m = MATERIALS.find((x) => x.id === sel.id)
+    if (!m) throw new Error(`Unknown material id: ${sel.id}`)
+    return m
+  }
+  return {
+    id: 'custom',
+    name: 'Custom alloy',
+    designation: 'user-defined',
+    composition: sel.composition,
+    group: 'custom',
+  }
 }
 
 export const MATERIALS: Material[] = [

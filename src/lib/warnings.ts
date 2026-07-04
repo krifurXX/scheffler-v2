@@ -1,9 +1,14 @@
-import type { Composition, Material } from '../data/materials'
+import type { Material } from '../data/materials'
 import { creq, isInsideDiagram, nieq } from './calc'
 
 export interface Warning {
   id: string
   text: string
+}
+
+export interface LabeledMaterial {
+  label: string
+  material: Material
 }
 
 /**
@@ -13,16 +18,12 @@ export interface Warning {
 const HIGH_CARBON_LIMIT = 0.12 // above this, the 30·C term grows unreliable (carbides)
 
 export function collectWarnings(
-  a: Material,
-  b: Material,
-  mixed: Composition,
+  inputs: LabeledMaterial[],
+  passPoints: { x: number; y: number }[],
 ): Warning[] {
   const warnings: Warning[] = []
 
-  for (const { m, label } of [
-    { m: a, label: 'Material A' },
-    { m: b, label: 'Material B' },
-  ]) {
+  for (const { material: m, label } of inputs) {
     if (!isInsideDiagram(creq(m.composition), nieq(m.composition))) {
       warnings.push({
         id: `outside-${label}`,
@@ -43,10 +44,16 @@ export function collectWarnings(
     }
   }
 
-  if (!isInsideDiagram(creq(mixed), nieq(mixed))) {
+  const final = passPoints[passPoints.length - 1]
+  if (final && !isInsideDiagram(final.x, final.y)) {
     warnings.push({
-      id: 'outside-mix',
-      text: 'The mixing point lies outside the valid area of the diagram.',
+      id: 'outside-weld',
+      text: 'The weld metal point lies outside the valid area of the diagram.',
+    })
+  } else if (passPoints.slice(0, -1).some((p) => !isInsideDiagram(p.x, p.y))) {
+    warnings.push({
+      id: 'outside-pass',
+      text: 'One or more intermediate pass points lie outside the valid area of the diagram.',
     })
   }
 
