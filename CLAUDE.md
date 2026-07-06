@@ -10,6 +10,10 @@ Modell:
 - Utan tillsatsmaterial ("None — autogenous weld"): v1-beteendet, punkten = grundmix
 - Sträng 1: c₁ = (1−D_root)·C + D_root·grundmix
 - Sträng n≥2: cₙ = (1−D_fill)·C + D_fill·cₙ₋₁ — punkterna konvergerar geometriskt mot C
+- Buffertskikt (valfritt, känd claddingpraxis): sträng 1..N_buffer använder buffertfiller
+  C1 (default ER309L), därefter claddinglegering C2 — samma utspädningsregler oavsett
+  filler. UI klampar N_buffer till 1..antal strängar−1 (sista strängen alltid C2);
+  `multiPassCompositions` själv är permissiv (buffer.passes ≥ passes ⇒ enbart buffert)
 
 ## Stack
 

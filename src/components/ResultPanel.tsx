@@ -5,6 +5,8 @@ import { DISCLAIMER, type Warning } from '../lib/warnings'
 export interface PassResult extends PointAnalysis {
   n: number
   composition: Composition
+  /** 'C1' (buffer) or 'C2' (cladding); set only when a buffer layer is active */
+  fillerLabel?: string
 }
 
 interface Props {
@@ -75,6 +77,9 @@ export default function ResultPanel({ passes, warnings, hasFiller }: Props) {
               <thead>
                 <tr className="text-gray-500">
                   <th className="font-normal text-left">Pass</th>
+                  {passes.some((p) => p.fillerLabel) && (
+                    <th className="font-normal text-left">Filler</th>
+                  )}
                   <th className="font-normal text-right">
                     Cr<sub>eq</sub>
                   </th>
@@ -89,6 +94,9 @@ export default function ResultPanel({ passes, warnings, hasFiller }: Props) {
                 {passes.map((p) => (
                   <tr key={p.n} className={p.n === final.n ? 'font-bold' : undefined}>
                     <td className="text-left tabular-nums">{p.n}</td>
+                    {passes.some((q) => q.fillerLabel) && (
+                      <td className="text-left">{p.fillerLabel ?? '—'}</td>
+                    )}
                     <td className="text-right tabular-nums">{fmt(p.x, 1)}</td>
                     <td className="text-right tabular-nums">{fmt(p.y, 1)}</td>
                     <td className="text-right">{p.region ? p.region.short : '—'}</td>
