@@ -31,6 +31,9 @@ export default function App() {
   // derived (never mutating state) so the stored value survives slider round-trips.
   const effBufferPasses = useBuffer && filler ? Math.min(bufferPasses, passes - 1) : 0
   const bufferActive = effBufferPasses > 0
+  // C1/C2 naming follows the toggle so panel, diagram and hint text always agree,
+  // even in the passes = 1 state where the buffer has no effect on the model yet
+  const showBuffer = useBuffer && filler !== null
 
   const baseMix = useMemo(
     () => mixComposition(materialA.composition, materialB.composition, pctB / 100),
@@ -66,7 +69,7 @@ export default function App() {
       { label: 'Material B', material: materialB },
       ...(bufferActive ? [{ label: 'Buffer filler C1', material: bufferMat }] : []),
       ...(filler
-        ? [{ label: bufferActive ? 'Cladding filler C2' : 'Filler C', material: filler }]
+        ? [{ label: showBuffer ? 'Cladding filler C2' : 'Filler C', material: filler }]
         : []),
     ],
     passResults,
@@ -87,15 +90,16 @@ export default function App() {
 
   if (filler) {
     const cPt = { x: creq(filler.composition), y: nieq(filler.composition) }
-    markers.push({ ...cPt, label: bufferActive ? 'C2' : 'C', shape: 'diamond', color: '#0f766e' })
+    markers.push({ ...cPt, label: showBuffer ? 'C2' : 'C', shape: 'diamond', color: '#0f766e' })
     markers.push({ ...basePt, label: '', shape: 'dot', color: '#46555f', size: 'small' })
+    if (showBuffer) {
+      const c1Pt = { x: creq(bufferMat.composition), y: nieq(bufferMat.composition) }
+      markers.push({ ...c1Pt, label: 'C1', shape: 'diamond', color: '#0f766e' })
+    }
     // the dashed guide shows the pass-1 mixing line, which targets the buffer filler when active
     const guidePt = bufferActive
       ? { x: creq(bufferMat.composition), y: nieq(bufferMat.composition) }
       : cPt
-    if (bufferActive) {
-      markers.push({ ...guidePt, label: 'C1', shape: 'diamond', color: '#0f766e' })
-    }
     lines.push({ x1: basePt.x, y1: basePt.y, x2: guidePt.x, y2: guidePt.y, color: '#0f766e', dash: '2 3' })
 
     // Pass path: base mix → pass 1 → … → final weld metal, converging toward C
@@ -155,7 +159,7 @@ export default function App() {
             accentClass="border-l-hv-blue"
           />
           <MaterialSelect
-            label="Filler C"
+            label={showBuffer ? 'Cladding filler C2' : 'Filler C'}
             value={fillerSel}
             onChange={setFillerSel}
             accentClass="border-l-teal-700"
@@ -192,7 +196,7 @@ export default function App() {
             onFillDilution={setFillDilutionPct}
             passes={passes}
             onPasses={setPasses}
-            hasBuffer={filler !== null && useBuffer}
+            hasBuffer={showBuffer}
             bufferPasses={bufferPasses}
             onBufferPasses={setBufferPasses}
           />
