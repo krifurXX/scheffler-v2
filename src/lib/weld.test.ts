@@ -176,15 +176,21 @@ describe('custom composition edge cases', () => {
 })
 
 describe('collectWarnings (labeled materials + pass points)', () => {
-  it('labels the high-carbon warning with the custom material label', () => {
-    const highC = resolveMaterial({
+  it('labels the outside-diagram warning with the custom material label', () => {
+    const highNi = resolveMaterial({
       kind: 'custom',
-      composition: { C: 0.5, Mn: 1, Si: 0.4, Cr: 5, Ni: 1, Mo: 0, Nb: 0 },
+      composition: { C: 0.1, Mn: 1, Si: 0.5, Cr: 20, Ni: 35, Mo: 0, Nb: 0 }, // Ni_eq 38.5 > 32
     })
-    const warnings = collectWarnings([{ label: 'Material A', material: highC }], [{ x: 10, y: 10 }])
-    const w = warnings.find((x) => x.id === 'carbon-Material A')
+    const warnings = collectWarnings([{ label: 'Material A', material: highNi }], [{ x: 10, y: 10 }])
+    const w = warnings.find((x) => x.id === 'outside-Material A')
     expect(w).toBeDefined()
-    expect(w!.text).toContain('Material A')
+    expect(w!.text).toBe('Material A (user-defined) lies outside the diagram area and prediction is not possible.')
+  })
+
+  it('raises no material warning for high-carbon database steels (expert review, Sept 2026)', () => {
+    const s355 = byId('S355') // C 0.17 — carbon warning was removed
+    const warnings = collectWarnings([{ label: 'Material A', material: s355 }], [{ x: 10, y: 10 }])
+    expect(warnings).toEqual([])
   })
 
   it('reports the final point outside the diagram as a weld warning', () => {
@@ -200,15 +206,18 @@ describe('collectWarnings (labeled materials + pass points)', () => {
   })
 
   it('produces independently labeled warnings for three materials', () => {
-    const s355 = byId('S355') // C 0.17 > 0.12 limit
+    const highNi = resolveMaterial({
+      kind: 'custom',
+      composition: { C: 0.1, Mn: 1, Si: 0.5, Cr: 20, Ni: 35, Mo: 0, Nb: 0 },
+    })
     const warnings = collectWarnings(
       [
-        { label: 'Material A', material: s355 },
-        { label: 'Material B', material: s355 },
-        { label: 'Filler C', material: s355 },
+        { label: 'Material A', material: highNi },
+        { label: 'Material B', material: highNi },
+        { label: 'Filler C', material: highNi },
       ],
       [{ x: 10, y: 10 }],
     )
-    expect(warnings.filter((w) => w.id.startsWith('carbon-'))).toHaveLength(3)
+    expect(warnings.filter((w) => w.id.startsWith('outside-'))).toHaveLength(3)
   })
 })

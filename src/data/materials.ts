@@ -19,8 +19,6 @@ export interface Material {
   composition: Composition
   /** EN standard range, for display (free text per element) */
   range?: Partial<Record<keyof Composition, string>>
-  /** Schaeffler ignores nitrogen — flag N-alloyed grades for a warning */
-  nitrogenAlloyed?: boolean
   group: 'austenitic' | 'ferritic' | 'martensitic' | 'unalloyed' | 'custom'
 }
 

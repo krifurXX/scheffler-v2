@@ -1,6 +1,6 @@
 import type { Composition } from '../data/materials'
 import type { PointAnalysis } from '../lib/calc'
-import { DISCLAIMER, type Warning } from '../lib/warnings'
+import { DISCLAIMER, PRIMARY_REFERENCE, type Warning } from '../lib/warnings'
 
 export interface PassResult extends PointAnalysis {
   n: number
@@ -121,6 +121,7 @@ export default function ResultPanel({ passes, warnings, hasFiller }: Props) {
         )}
 
         <p className="text-xs text-gray-600 border-t border-gray-200 pt-2">{DISCLAIMER}</p>
+        <p className="text-xs text-gray-500">{PRIMARY_REFERENCE}</p>
       </div>
     </div>
   )
