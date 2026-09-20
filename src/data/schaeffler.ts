@@ -12,7 +12,7 @@ export const AXIS = {
   crMin: 0,
   crMax: 40,
   niMin: 0,
-  niMax: 32,
+  niMax: 30, // Schaeffler's original 1949 sheet spans Cr_eq 0–40 and Ni_eq 0–30
 } as const
 
 export type RegionId = 'A' | 'A_M' | 'M' | 'F_M' | 'M_F' | 'A_M_F' | 'A_F' | 'F'
@@ -33,7 +33,7 @@ export const REGIONS: Region[] = [
     id: 'A',
     label: 'Austenite',
     short: 'A',
-    polygon: [[0, 25.9], [17.7, 11.7], [36.8, 32], [0, 32]],
+    polygon: [[0, 25.9], [17.7, 11.7], [34.918, 30], [0, 30]],
     labelAt: [14, 24],
   },
   {
@@ -75,7 +75,7 @@ export const REGIONS: Region[] = [
     id: 'A_F',
     label: 'Austenite + ferrite',
     short: 'A + F',
-    polygon: [[17.7, 11.7], [26.4, 4.7], [40, 9.2], [40, 32], [36.8, 32]],
+    polygon: [[17.7, 11.7], [26.4, 4.7], [40, 9.2], [40, 30], [34.918, 30]],
     labelAt: [30, 16],
   },
   {
@@ -96,10 +96,11 @@ export interface FerriteLine {
 /**
  * Iso-ferrite lines in the A+F / A+M+F fields. The 0 % and 100 % lines span
  * the whole diagram; the 5–80 % lines are drawn only above the M/(A+M) boundary.
+ * The 0 % and 5 % lines are clipped at Ni_eq = 30 (same lines, shorter; top of the original sheet).
  */
 export const FERRITE_LINES: FerriteLine[] = [
-  { pct: 0, start: [6.75, 0], end: [36.8, 32] },
-  { pct: 5, start: [15.0, 7.3], end: [39.7, 32] },
+  { pct: 0, start: [6.75, 0], end: [34.918, 30] },
+  { pct: 5, start: [15.0, 7.3], end: [37.7, 30] },
   { pct: 10, start: [15.6, 6.8], end: [40, 28.2] },
   { pct: 20, start: [16.6, 6.0], end: [40, 23.3] },
   { pct: 40, start: [17.6, 5.2], end: [40, 19.8] },

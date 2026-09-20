@@ -10,8 +10,10 @@ import {
   nieq,
   weldComposition,
 } from './calc'
+import { AXIS } from '../data/schaeffler'
+import { estimateFerrite } from './calc'
 import { isSingleMaterialLookup } from './lookup'
-import { collectWarnings } from './warnings'
+import { collectWarnings, DISCLAIMER, LIABILITY } from './warnings'
 
 const byId = (id: string) => {
   const m = MATERIALS.find((x) => x.id === id)
@@ -180,7 +182,7 @@ describe('collectWarnings (labeled materials + pass points)', () => {
   it('labels the outside-diagram warning with the custom material label', () => {
     const highNi = resolveMaterial({
       kind: 'custom',
-      composition: { C: 0.1, Mn: 1, Si: 0.5, Cr: 20, Ni: 35, Mo: 0, Nb: 0 }, // Ni_eq 38.5 > 32
+      composition: { C: 0.1, Mn: 1, Si: 0.5, Cr: 20, Ni: 35, Mo: 0, Nb: 0 }, // Ni_eq 38.5 > 30
     })
     const warnings = collectWarnings([{ label: 'Material A', material: highNi }], [{ x: 10, y: 10 }])
     const w = warnings.find((x) => x.id === 'outside-Material A')
@@ -229,5 +231,35 @@ describe('isSingleMaterialLookup', () => {
     expect(isSingleMaterialLookup(0, true)).toBe(false)
     expect(isSingleMaterialLookup(1, false)).toBe(false)
     expect(isSingleMaterialLookup(50, false)).toBe(false)
+  })
+})
+
+describe("Schaeffler's own worked example (Metal Progress 1949, p. 680-B, point X)", () => {
+  // Type 318 (316Cb) weld deposit; Schaeffler reads austenite + 0–5 % ferrite, magnetic analysis gave 2 %
+  const x318: Composition = { C: 0.07, Mn: 1.55, Si: 0.57, Cr: 18.02, Ni: 11.87, Mo: 2.16, Nb: 0.8 }
+
+  it('reproduces the equivalents, the A+F field and about 2 % ferrite', () => {
+    expect(creq(x318)).toBeCloseTo(21.435, 3)
+    expect(nieq(x318)).toBeCloseTo(14.745, 3)
+    expect(classifyPoint(creq(x318), nieq(x318))!.id).toBe('A_F')
+    const f = estimateFerrite(creq(x318), nieq(x318))!
+    expect(f).toBeGreaterThan(0)
+    expect(f).toBeLessThan(5)
+    expect(Math.abs(f - 2)).toBeLessThan(1)
+  })
+
+  it('uses the axis range of the original sheet (Cr_eq 0–40, Ni_eq 0–30)', () => {
+    expect(AXIS.crMax).toBe(40)
+    expect(AXIS.niMax).toBe(30)
+    expect(classifyPoint(20, 30.5)).toBeNull()
+  })
+})
+
+describe('disclaimer texts (expert review, September 2026)', () => {
+  it('states the arc-welding basis, the two original caveats and the liability note', () => {
+    expect(DISCLAIMER).toContain('arc-welding processes')
+    expect(DISCLAIMER).toContain('martensitic and ferritic grades are qualitative')
+    expect(DISCLAIMER).toContain('first approximation')
+    expect(LIABILITY).toContain('No liability or responsibility')
   })
 })

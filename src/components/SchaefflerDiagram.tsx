@@ -132,7 +132,7 @@ export default function SchaefflerDiagram({ markers, lines, activeRegionId }: Pr
           {x}
         </text>
       ))}
-      {gridY.filter((y) => y % 4 === 0).map((y) => (
+      {gridY.filter((y) => y % 4 === 0 || y === AXIS.niMax).map((y) => (
         <text key={`ty${y}`} x={px(0) - 8} y={py(y) + 4} fontSize={12} textAnchor="end" fill="#202020">
           {y}
         </text>

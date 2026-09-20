@@ -77,3 +77,15 @@ B fyrkant, C/C1/C2 romb; ritordning punkter → ringar → brickor via markerLay
 brickorna, så den syns som en ring runt A i enmaterialsläget. Material B är mörk magenta `#8a1c5a`
 (token `--color-mat-b`, klass `border-l-mat-b` på B-panelen) – en diagramdatafärg som medvetet
 ligger utanför HV-paletten, eftersom HV-blått försvann mot austenitfältet. Beslutat 2026-09-20.
+
+## Axel, disclaimer och originalet (2026-09-20)
+
+Efter att svetsexperten läst genomgången av Schaeffler 1949: Ni-axeln är 0–30 som i originalbladet
+(fält och 0 %/5 %-linjerna klippta vid 30 på samma linjer). Disclaimern anger att diagrammet bygger på
+experimentdata från bågsvetsning (ingen uppräkning av andra processer), att martensitiska/ferritiska
+sorter bara predikteras kvalitativt och att blandförband ger en första approximation; `LIABILITY`
+visas sist. Schaefflers punkt X (Type 318) är ett test. Att 1949 är en revision av äldre diagram ska
+INTE nämnas i appen.
+
+Geometrins jämförelse mot originalet finns i `../scheffler/docs/comparison/`; ett eventuellt byte av
+geometri är ett öppet beslut (väntar på expertens svar) och ska i så fall göras i v1 och v2 samtidigt.
