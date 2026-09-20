@@ -10,6 +10,7 @@ import {
   nieq,
   weldComposition,
 } from './calc'
+import { isSingleMaterialLookup } from './lookup'
 import { collectWarnings } from './warnings'
 
 const byId = (id: string) => {
@@ -219,5 +220,14 @@ describe('collectWarnings (labeled materials + pass points)', () => {
       [{ x: 10, y: 10 }],
     )
     expect(warnings.filter((w) => w.id.startsWith('outside-'))).toHaveLength(3)
+  })
+})
+
+describe('isSingleMaterialLookup', () => {
+  it('is true only at 100 % A without filler', () => {
+    expect(isSingleMaterialLookup(0, false)).toBe(true)
+    expect(isSingleMaterialLookup(0, true)).toBe(false)
+    expect(isSingleMaterialLookup(1, false)).toBe(false)
+    expect(isSingleMaterialLookup(50, false)).toBe(false)
   })
 })

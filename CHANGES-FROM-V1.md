@@ -77,3 +77,6 @@ to healthy ferrite levels.
 - The 17 original tests are unchanged and still lock the diagram geometry and
   classification; 18 new tests in `src/lib/weld.test.ts` cover the weld math,
   multi-pass convergence, custom materials, and the new warnings (35 total).
+- Single-material lookup (September 2026): a "Look up a single material" box
+  under the diagram explains the steps; at 100 % A with no filler, Material B
+  and the A–B line are hidden and B is left out of the warning check.

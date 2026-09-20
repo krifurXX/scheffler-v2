@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import LookupHint from './components/LookupHint'
 import MaterialSelect from './components/MaterialSelect'
 import ResultPanel, { type PassResult } from './components/ResultPanel'
 import SchaefflerDiagram, {
@@ -8,6 +9,7 @@ import SchaefflerDiagram, {
 import WeldControls from './components/WeldControls'
 import { resolveMaterial, type MaterialSelection } from './data/materials'
 import { analyzeComposition, creq, mixComposition, multiPassCompositions, nieq } from './lib/calc'
+import { isSingleMaterialLookup } from './lib/lookup'
 import { collectWarnings } from './lib/warnings'
 
 export default function App() {
@@ -63,10 +65,13 @@ export default function App() {
 
   const final = passResults[passResults.length - 1]
 
+  // 100 % A without filler: the user is looking up Material A alone, so B is left out
+  const single = isSingleMaterialLookup(pctB, filler !== null)
+
   const warnings = collectWarnings(
     [
       { label: 'Material A', material: materialA },
-      { label: 'Material B', material: materialB },
+      ...(single ? [] : [{ label: 'Material B', material: materialB }]),
       ...(bufferActive ? [{ label: 'Buffer filler C1', material: bufferMat }] : []),
       ...(filler
         ? [{ label: showBuffer ? 'Cladding filler C2' : 'Filler C', material: filler }]
@@ -80,13 +85,12 @@ export default function App() {
   const bPt = { x: creq(materialB.composition), y: nieq(materialB.composition) }
   const basePt = { x: creq(baseMix), y: nieq(baseMix) }
 
-  const markers: DiagramMarker[] = [
-    { ...aPt, label: 'A', shape: 'circle', color: '#003b5b' },
-    { ...bPt, label: 'B', shape: 'square', color: '#1380a4' },
-  ]
-  const lines: DiagramLine[] = [
-    { x1: aPt.x, y1: aPt.y, x2: bPt.x, y2: bPt.y, color: '#003b5b', dash: '2 3' },
-  ]
+  const markers: DiagramMarker[] = [{ ...aPt, label: 'A', shape: 'circle', color: '#003b5b' }]
+  const lines: DiagramLine[] = []
+  if (!single) {
+    markers.push({ ...bPt, label: 'B', shape: 'square', color: '#1380a4' })
+    lines.push({ x1: aPt.x, y1: aPt.y, x2: bPt.x, y2: bPt.y, color: '#003b5b', dash: '2 3' })
+  }
 
   if (filler) {
     const cPt = { x: creq(filler.composition), y: nieq(filler.composition) }
@@ -143,6 +147,7 @@ export default function App() {
             lines={lines}
             activeRegionId={final.region?.id ?? null}
           />
+          <LookupHint />
         </section>
 
         <section className="space-y-4" aria-label="Settings and result">

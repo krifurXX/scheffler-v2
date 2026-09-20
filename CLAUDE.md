@@ -57,3 +57,9 @@ UI-text på engelska (ändrat från svenska juni 2026), kod och kommentarer på 
 Decimaler med punkt. HV:s grafiska profil:
 mörkblå #003b5b, blå #1380a4, ljusblå #e4f1f8, Arial, skarpa hörn (inga rounded).
 Extra markörfärger i v2: filler C teal #0f766e, svetspunkt orange #d9480f.
+
+## Enmaterialsläge (sep 2026)
+
+`LookupHint` (under diagrammet) beskriver hur man slår upp ett enda material: Material A, reglaget
+på 100 % A, Filler C = None. `isSingleMaterialLookup` (`src/lib/lookup.ts`) är då sann, och `App.tsx`
+utelämnar B-markören, linjen A–B och Material B ur varningskontrollen. Inget separat läge eller knapp.
