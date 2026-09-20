@@ -80,3 +80,6 @@ to healthy ferrite levels.
 - Single-material lookup (September 2026): a "Look up a single material" box
   under the diagram explains the steps; at 100 % A with no filler, Material B
   and the A–B line are hidden and B is left out of the warning check.
+- Marker style (September 2026): materials are drawn as lettered badges with a
+  white outline, Material B in dark magenta (#8a1c5a); rings are drawn beneath
+  badges. The recorded demo videos still show the earlier, smaller markers.
