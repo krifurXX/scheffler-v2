@@ -215,8 +215,8 @@ export default function App() {
       </main>
 
       <footer className="max-w-7xl mx-auto px-6 pb-6 text-xs text-gray-500">
-        Diagram after Schaeffler (1949). Boundary lines digitized from published reproductions
-        (±0.5 units). HV.SE
+        Diagram after Schaeffler (1949). Boundary lines fitted to the original Metal Progress
+        sheet (±0.1 units). HV.SE
       </footer>
     </div>
   )

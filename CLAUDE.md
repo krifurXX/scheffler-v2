@@ -45,11 +45,13 @@ src/
 
 ## Viktigt om diagramdatan
 
-Koordinaterna i `src/data/schaeffler.ts` är konsensus från två oberoende
-vektordigitaliseringar (dacapo svetshandbok-PDF och Wikimedia Commons
-"Diagramme schaeffler.svg") som stämmer inom ±0,5 ekvivalentenheter. **Ändra inte
-polygonkoordinaterna utan ny källa** — testerna i calc.test.ts låser klassificeringen
-av kända punkter. Formlerna är kanonisk Schaeffler (utan kväve). Enligt expertgranskningen
+Koordinaterna i `src/data/schaeffler.ts` är sedan 2026-09-23 linjer anpassade direkt ur
+Schaefflers originalblad (Metal Progress 1949, skanning kalibrerad mot bladets eget rutnät,
+±0,04 enheter; se `docs/comparison/original1949/` i v1). Polygonhörnen är linjernas exakta
+skärningspunkter avrundade till 0,01. De två vektorreproduktionerna (dacapo, Wikimedia) som
+tidigare låg till grund stämmer med originalet inom 0,1–0,65 enheter och är nu bara en
+kontroll. **Ändra inte polygonkoordinaterna utan ny källa** — testerna i calc.test.ts låser
+klassificeringen av kända punkter. Formlerna är kanonisk Schaeffler (utan kväve). Enligt expertgranskningen
 (sep 2026) ska apptexter inte nämna senare koefficienter (DeLong/WRC) eller lista
 olämpliga processer, utan hänvisa till originalkällan.
 

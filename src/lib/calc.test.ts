@@ -29,8 +29,8 @@ describe('Schaeffler equivalents', () => {
 
 describe('classifyPoint', () => {
   it('places 304 near the four-field corner (A+M+F or A+F)', () => {
-    // (18.8, 10.5) sits ~0.3 units below the A/(A+F) boundary — inside A+M+F,
-    // within the diagram's own ±0.5 unit accuracy of the corner at (17.7, 11.7)
+    // (18.8, 10.5) sits ~0.1 units from the A+M+F / A+F boundary near the four-field
+    // corner at (17.68, 11.29): A+F with the original's lines, A+M+F with the reproductions
     const c = byId('304').composition
     const region = classifyPoint(creq(c), nieq(c))
     expect(region).not.toBeNull()
@@ -38,7 +38,8 @@ describe('classifyPoint', () => {
   })
 
   it('places S355 in a martensite-dominated field (M or F+M)', () => {
-    // (0.65, 5.8) is ~0.1 units inside the small F+M corner triangle
+    // (0.65, 5.8) lies ~0.1 units from the F+M corner boundary (0,7.39)–(2.42,0):
+    // M with the original's lines, F+M with the reproductions
     const c = byId('S355').composition
     expect(['M', 'F_M']).toContain(classifyPoint(creq(c), nieq(c))!.id)
   })
@@ -109,15 +110,15 @@ describe('estimateFerrite', () => {
   })
 
   it('is monotonically increasing downward in the A+F field', () => {
-    // at Cr_eq 30 the A+F field spans Ni_eq ≈ 5.9 (100 % line) to 24.8 (0 % line)
+    // at Cr_eq 30 the A+F field spans Ni_eq ≈ 5.8 (100 % line) to 24.8 (0 % line)
     const at = (y: number) => estimateFerrite(30, y)!
     expect(at(24)).toBeLessThan(at(18))
     expect(at(18)).toBeLessThan(at(12))
   })
 
   it('returns ~10% on the 10% line', () => {
-    // 10% line: (15.6,6.8) → (40,28.2); at x=30 → y ≈ 19.46
-    const y = 6.8 + ((28.2 - 6.8) * (30 - 15.6)) / (40 - 15.6)
+    // 10% line: (15.59,6.77) → (40,28.37); at x=30 → y ≈ 19.53
+    const y = 6.77 + ((28.37 - 6.77) * (30 - 15.59)) / (40 - 15.59)
     expect(estimateFerrite(30, y)!).toBeCloseTo(10, 1)
   })
 
