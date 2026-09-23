@@ -132,12 +132,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
-      <header className="bg-hv-dark text-white px-6 py-4">
-        <h1 className="text-xl font-bold">Schaeffler diagram — weld metal prediction</h1>
-        <p className="text-sm text-hv-light mt-0.5">
-          Select base materials (and optionally a filler metal) and see where the weld metal ends
-          up in the diagram
-        </p>
+      <header className="bg-hv-dark text-white px-6 py-4 flex items-center justify-between gap-6">
+        <div>
+          <h1 className="text-xl font-bold">Schaeffler diagram — weld metal prediction</h1>
+          <p className="text-sm text-hv-light mt-0.5">
+            Select base materials (and optionally a filler metal) and see where the weld metal ends
+            up in the diagram
+          </p>
+        </div>
+        <img src="/hv-logo-white.png" alt="University West" className="h-12 w-auto shrink-0" />
       </header>
 
       <main className="max-w-7xl mx-auto p-4 lg:p-6 grid gap-4 lg:grid-cols-[2fr_1fr]">
